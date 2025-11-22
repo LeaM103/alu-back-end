@@ -1,7 +1,27 @@
 #!/usr/bin/python3
 """Script to get todos for a user from API"""
 
-import requests
+try:
+    import requests  # type: ignore
+except Exception:
+    # Minimal fallback using urllib if requests isn't installed
+    import urllib.request
+    import json
+
+    class _Response:
+        def __init__(self, data):
+            self._data = data
+
+        def json(self):
+            return json.loads(self._data.decode('utf-8'))
+
+    class requests:
+        @staticmethod
+        def get(url):
+            with urllib.request.urlopen(url) as resp:
+                data = resp.read()
+            return _Response(data)
+
 import sys
 
 
